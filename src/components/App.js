@@ -3,6 +3,7 @@ import './App.css';
 import Header from "./Header";
 import AddContact from "./AddContact";
 import ContactList from "./ContactList";
+import uuid from "react-native-uuid";
 
 function App() {
   const LOCAL_STORAGE_KEY = "contacts";
@@ -10,7 +11,15 @@ function App() {
 
   const addContactHandler = (contact) => {
   console.log(contact);
-  setContacts([...contacts, contact]);
+  setContacts([...contacts, {id: uuid.v4(),...contact}]);
+  };
+
+  const removeContactHandler = (id) => {
+    const newContactList = contacts.filter((contact) => {
+      return contact.id !== id;
+    });
+
+    setContacts(newContactList)
   };
 
   useEffect(() => {
@@ -24,8 +33,8 @@ function App() {
     <div className='ui container'>
       <Header/>
         <AddContact addContactHandler ={addContactHandler}/>
-        <ContactList contacts={contacts}/>
-    </div>
+        <ContactList contacts={contacts} getContactId = {removeContactHandler}/>
+    </div> 
   );
 }
 
