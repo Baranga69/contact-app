@@ -1,9 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import './App.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Header from "./Header";
 import AddContact from "./AddContact";
 import ContactList from "./ContactList";
 import uuid from "react-native-uuid";
+import ContactDetail from './ContactDetail';
 
 function App() {
   const LOCAL_STORAGE_KEY = "contacts";
@@ -27,13 +29,34 @@ function App() {
     if (retrieveContacts) setContacts(retrieveContacts);
   }, []);
   useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(contacts));
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(contacts)); 
   }, [contacts]);
   return (
     <div className='ui container'>
-      <Header/>
-        <AddContact addContactHandler ={addContactHandler}/>
-        <ContactList contacts={contacts} getContactId = {removeContactHandler}/>
+      <Router>
+          <Header/>
+          <Routes>
+            <Route path= "/" 
+              exact
+              render={(props) => (
+              <ContactList 
+                  {...props} 
+                  contacts={contacts} 
+                  getContactId = {removeContactHandler}
+                />
+              )}
+            />
+            <Route path= "/add" 
+             render = {(props) => (
+               <AddContact 
+               {...props} 
+               addContactHandler={addContactHandler}/>
+             )}
+            />
+            <Route path='/contact/:id'
+            element={ContactDetail}/>
+          </Routes>
+        </Router>
     </div> 
   );
 }
